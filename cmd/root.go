@@ -49,6 +49,11 @@ to quickly create a Cobra application.`,
 		message := fmt.Sprintf("Your search keyword is %s, and search directory is %s", keyword, path)
 
 		fmt.Println(message)
+
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			fmt.Printf("gogrep: no matches found: %s", path)
+			return
+		}
 	},
 }
 
