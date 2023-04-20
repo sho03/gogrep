@@ -41,9 +41,9 @@ var rootCmd = &cobra.Command{
 	Use:   "gogrep",
 	Short: "This tool is simple grep command.",
 	Long: `This tool searches for lines that contain the specified keyword .
-	How to use this tool is below.
-	gogrep <search keyword> <path>
-	<path> is optional. if <path> is not specified, current directory is used.`,
+How to use this tool is below.
+gogrep <search keyword> <path>
+<path> is optional. if <path> is not specified, current directory is used.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("error! This tool usage is below. please try again.")
