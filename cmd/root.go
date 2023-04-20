@@ -59,8 +59,6 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		result := make(map[string][]GrepResult)
-
 		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 
 			if err != nil {
@@ -79,23 +77,21 @@ to quickly create a Cobra application.`,
 
 			defer file.Close()
 
-			maches := []GrepResult{}
-
 			scanner := bufio.NewScanner(file)
+
+			showedFileName := false
+
 			i := 1
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.Contains(line, keyword) {
-					gr := GrepResult{
-						LineNumber: i,
-						Line:       line,
+					if !showedFileName {
+						fmt.Println(path)
+						showedFileName = true
 					}
-					maches = append(maches, gr)
+					fmt.Println(i, line)
 				}
 				i += 1
-			}
-			if len(maches) > 0 {
-				result[path] = maches
 			}
 
 			return nil
@@ -103,13 +99,6 @@ to quickly create a Cobra application.`,
 
 		if err != nil {
 			fmt.Println(err)
-		}
-
-		for k, v := range result {
-			fmt.Println(k)
-			for _, gr := range v {
-				fmt.Println(gr.LineNumber, gr.Line)
-			}
 		}
 	},
 }
