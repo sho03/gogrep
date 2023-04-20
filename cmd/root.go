@@ -38,17 +38,17 @@ type GrepResult struct {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gogrep",
+	Use:   "gogrep <search keyword> [path]",
 	Short: "This tool is simple grep command.",
 	Long: `This tool searches for lines that contain the specified keyword .
 How to use this tool is below.
-gogrep <search keyword> <path>
-<path> is optional. if <path> is not specified, current directory is used.`,
+gogrep <search keyword> [path]
+[path] is optional. if [path] is not specified, current directory is used.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("error! This tool usage is below. please try again.")
-			fmt.Println("gogrep <search keyword> <path>")
-			fmt.Println("<path> is optional. if <path> is not specified, current directory is used.")
+			fmt.Println("gogrep <search keyword> [path]")
+			fmt.Println("[path] is optional. if [path] is not specified, current directory is used.")
 			return
 		}
 		keyword := args[0]
