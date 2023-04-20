@@ -47,12 +47,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 2 {
-			fmt.Println("At least two string arguments are required! search keyword and directory path!")
+		if len(args) < 1 {
+			fmt.Println("error! This tool usage is below. please try again.")
+			fmt.Println("gogrep <search keyword> <path>")
+			fmt.Println("<path> is optional. if <path> is not specified, current directory is used.")
 			return
 		}
 		keyword := args[0]
-		path := args[1]
+		var path string
+		if len(args) == 1 {
+			path = "."
+		} else {
+			path = args[1]
+		}
 
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			fmt.Printf("gogrep: no matches found: %s", path)
