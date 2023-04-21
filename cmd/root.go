@@ -64,6 +64,8 @@ gogrep <search keyword> [path]
 			return
 		}
 
+		foundAny := false
+
 		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 
 			if err != nil {
@@ -90,6 +92,7 @@ gogrep <search keyword> [path]
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.Contains(line, keyword) {
+					foundAny = true
 					if !showedFileName {
 						fmt.Println(path)
 						showedFileName = true
@@ -101,6 +104,10 @@ gogrep <search keyword> [path]
 
 			return nil
 		})
+
+		if !foundAny {
+			fmt.Println("\033[33mResult:\033[0m No matches found.")
+		}
 
 		if err != nil {
 			fmt.Println(err)
