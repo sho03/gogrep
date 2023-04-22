@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -43,7 +43,9 @@ var rootCmd = &cobra.Command{
 	Long: `This tool searches for lines that contain the specified keyword .
 How to use this tool is below.
 gogrep <search keyword> [path]
-[path] is optional. if [path] is not specified, current directory is used.`,
+[path] is optional. if [path] is not specified, current directory is used.
+
+!keyword is always treated as regular expressions.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			fmt.Println("error! This tool usage is below. please try again.")
@@ -51,7 +53,10 @@ gogrep <search keyword> [path]
 			fmt.Println("[path] is optional. if [path] is not specified, current directory is used.")
 			return
 		}
+
 		keyword := args[0]
+		pattern := regexp.MustCompile(keyword)
+
 		var path string
 		if len(args) == 1 {
 			path = "."
@@ -91,7 +96,7 @@ gogrep <search keyword> [path]
 			i := 1
 			for scanner.Scan() {
 				line := scanner.Text()
-				if strings.Contains(line, keyword) {
+				if pattern.MatchString(line) {
 					foundAny = true
 					if !showedFileName {
 						fmt.Println(path)
