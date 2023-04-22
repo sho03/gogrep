@@ -27,6 +27,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -38,7 +39,7 @@ type GrepResult struct {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gogrep <search keyword> [path]",
+	Use:   "gogrep <search keyword> [path] [options]",
 	Short: "This tool is simple grep command.",
 	Long: `This tool searches for lines that contain the specified keyword .
 How to use this tool is below.
@@ -54,8 +55,19 @@ gogrep <search keyword> [path]
 			return
 		}
 
+		ignoreCase, err := cmd.Flags().GetBool("ignore-case")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
 		keyword := args[0]
-		pattern := regexp.MustCompile(keyword)
+		var pattern *regexp.Regexp
+		if ignoreCase {
+			pattern = regexp.MustCompile(strings.ToLower(keyword))
+		} else {
+			pattern = regexp.MustCompile(keyword)
+		}
 
 		var path string
 		if len(args) == 1 {
@@ -71,7 +83,7 @@ gogrep <search keyword> [path]
 
 		foundAny := false
 
-		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		err = filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 
 			if err != nil {
 				return err
@@ -96,7 +108,13 @@ gogrep <search keyword> [path]
 			i := 1
 			for scanner.Scan() {
 				line := scanner.Text()
-				if pattern.MatchString(line) {
+				var target string
+				if ignoreCase {
+					target = strings.ToLower(line)
+				} else {
+					target = line
+				}
+				if pattern.MatchString(target) {
 					foundAny = true
 					if !showedFileName {
 						fmt.Println(path)
@@ -138,5 +156,5 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP("ignore-case", "i", false, "ignore case distinctions")
 }
